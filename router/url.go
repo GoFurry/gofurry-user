@@ -33,8 +33,8 @@ func userApi(g fiber.Router) {
 
 func oauthApi(g fiber.Router) {
 	g.Get("/callback/github", oauth.OauthApi.GithubCallback) // github 三方登录
+	g.Get("/callback/gitee", oauth.OauthApi.GiteeCallback)   // gitee 三方登录
 	//g.Get("/callback/google", oauth.OauthApi.GoogleCallback)
-	//g.Get("/callback/gitee", oauth.OauthApi.GiteeCallback)
 }
 
 func utilApi(g fiber.Router) {
