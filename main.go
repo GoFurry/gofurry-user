@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoFurry/gofurry-user/common"
 	cs "github.com/GoFurry/gofurry-user/common/service"
+	"github.com/GoFurry/gofurry-user/common/util"
 	"github.com/GoFurry/gofurry-user/roof/env"
 	routers "github.com/GoFurry/gofurry-user/router"
 	"github.com/gofiber/fiber/v2/log"
@@ -106,8 +107,6 @@ func InitOnStart() {
 	}
 	// 初始化 redis
 	cs.InitRedisOnStart()
-	// 初始化时间调度
-	cs.InitTimeWheelOnStart()
 }
 
 func (gf *goFurry) Start(s service.Service) error {
@@ -150,5 +149,7 @@ func (gf *goFurry) Stop(s service.Service) error {
 	} else {
 		log.Info("etcd客户端关闭成功")
 	}
+	// 关闭 grpc 全局连接池
+	util.CloseGrpcConns()
 	return nil
 }

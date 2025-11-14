@@ -18,8 +18,6 @@ import (
 	"github.com/GoFurry/gofurry-user/common/util"
 	"github.com/GoFurry/gofurry-user/roof/env"
 	"github.com/gofiber/fiber/v2"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type oauthService struct{}
@@ -42,20 +40,17 @@ func (s oauthService) GithubLogin(c *fiber.Ctx, code string) (string, common.GFE
 
 	// 微服务版本
 	// 连接gRPC服务
-	//creds, err := credentials.NewClientTLSFromFile("server.crt", "")
+	//creds, err := credentials.NewClientTLSFromFile(env.GetServerConfig().Key.GrpcTls, "")
 	//if err != nil {
 	//	return "", common.NewServiceError("加载TLS证书失败: " + err.Error())
 	//}
-	conn, err := grpc.NewClient(
-		"etcd:///github-oauth-service",
-		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		//grpc.WithTransportCredentials(creds),
-	)
+	// 连接池复用 gRPC 连接
+	conn, err := util.GetGrpcClientConn("github-oauth-service", nil)
 	if err != nil {
-		return "", common.NewServiceError("连接gRPC服务失败: " + err.Error())
+		return "", common.NewServiceError("获取 gRPC 连接失败: " + err.Error())
 	}
-	defer conn.Close()
+
+	// 创建客户端
 	client := githuboauth.NewGithubOAuthServiceClient(conn)
 
 	// gRPC 获取令牌
@@ -84,6 +79,26 @@ func (s oauthService) GithubLogin(c *fiber.Ctx, code string) (string, common.GFE
 	userOpenID := userInfo.Login // GitHub用户名 唯一标识
 
 	return oauthLogin(c, userOpenID, "github")
+}
+
+func (s oauthService) GiteeLogin(c *fiber.Ctx, code string) (string, common.GFError) {
+	// 连接gRPC服务
+	//creds, err := credentials.NewClientTLSFromFile(env.GetServerConfig().Key.GrpcTls, "")
+	//if err != nil {
+	//	return "", common.NewServiceError("加载TLS证书失败: " + err.Error())
+	//}
+	// 连接池复用 gRPC 连接
+	conn, err := util.GetGrpcClientConn("github-oauth-service", nil)
+	if err != nil {
+		return "", common.NewServiceError("获取 gRPC 连接失败: " + err.Error())
+	}
+
+	// 创建客户端
+	client := githuboauth.NewGithubOAuthServiceClient(conn)
+	client = client
+	// TODO:
+
+	return "", nil
 }
 
 // oauthLogin 注册/登录逻辑
