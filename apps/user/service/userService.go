@@ -13,6 +13,7 @@ import (
 	cm "github.com/GoFurry/gofurry-user/common/models"
 	cs "github.com/GoFurry/gofurry-user/common/service"
 	"github.com/GoFurry/gofurry-user/common/util"
+	"github.com/GoFurry/gofurry-user/roof/env"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -51,7 +52,7 @@ func (svc *userService) Login(c *fiber.Ctx, req models.UserLoginRequest) (tokenS
 	decryptPassword := req.Password
 
 	// 校验密码
-	password := util.CreateMD5(decryptPassword + common.COMMON_AUTH_SALT)
+	password := util.CreateMD5(decryptPassword + env.GetServerConfig().Auth.AuthSalt)
 	if password != userRecord.Password {
 		err = common.NewServiceError("密码错误.")
 		return
@@ -104,7 +105,7 @@ func (svc *userService) Register(req models.UserRegisterRequest) (err common.GFE
 	}
 	// 校对验证码
 	code, err := cs.GetString("email:" + req.Email)
-	if code != util.CreateMD5(req.Code+common.COMMON_AUTH_SALT) || err != nil {
+	if code != util.CreateMD5(req.Code+env.GetServerConfig().Auth.AuthSalt) || err != nil {
 		return common.NewServiceError("邮箱验证码错误")
 	}
 
@@ -117,7 +118,7 @@ func (svc *userService) Register(req models.UserRegisterRequest) (err common.GFE
 
 	// 插入用户信息
 	userTab := &models.GfUser{
-		Password: util.CreateMD5(decryptNewPassword + common.COMMON_AUTH_SALT),
+		Password: util.CreateMD5(decryptNewPassword + env.GetServerConfig().Auth.AuthSalt),
 		Nickname: req.Name,
 		Oauth:    false,
 		Role:     req.Role,

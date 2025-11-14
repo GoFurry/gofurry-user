@@ -8,9 +8,8 @@ package common
 
 // 项目
 const (
-	COMMON_PROJECT_NAME = "gf-user"              // 项目名
-	COMMON_AUTH_SALT    = "GoFurry20251024@wolf" // 盐
-	COMMON_AUTH_CURRENT = "currentUser"          // 当前用户
+	COMMON_PROJECT_NAME = "gf-user"     // 项目名
+	COMMON_AUTH_CURRENT = "currentUser" // 当前用户
 )
 
 // 时间
@@ -25,11 +24,6 @@ const (
 	RETURN_FAILED           = 0 //失败
 	RETURN_SUCCESS          = 1 //成功
 	RETURN_RECORD_NOT_FOUND = "404"
-)
-
-// JWT
-const (
-	TOKEN_SECRET = "GolangNotFurryTho" // JWT密钥
 )
 
 // 常量

@@ -8,6 +8,7 @@ import (
 	"github.com/GoFurry/gofurry-user/common/log"
 	cs "github.com/GoFurry/gofurry-user/common/service"
 	"github.com/GoFurry/gofurry-user/common/util"
+	"github.com/GoFurry/gofurry-user/roof/env"
 )
 
 type emailService struct{}
@@ -35,7 +36,7 @@ func (svc *emailService) SendEmail(email string) common.GFError {
 		return err
 	}
 	// 邮件验证码存redis
-	code = util.CreateMD5(code + common.COMMON_AUTH_SALT)
+	code = util.CreateMD5(code + env.GetServerConfig().Auth.AuthSalt)
 	_ = cs.SetExpire("email:"+email, code, 300*time.Second)
 	return nil
 }

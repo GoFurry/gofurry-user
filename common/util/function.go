@@ -176,7 +176,7 @@ func GenerateRandomCode(length int) (code string) {
 // JWT 密钥
 func Secret() jwt.Keyfunc {
 	return func(token *jwt.Token) (interface{}, error) {
-		return []byte(common.TOKEN_SECRET), nil
+		return []byte(env.GetServerConfig().Auth.JwtSecret), nil
 	}
 }
 
@@ -212,7 +212,7 @@ func NewToken(userId string, userName string) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(common.TOKEN_SECRET))
+	return token.SignedString([]byte(env.GetServerConfig().Auth.JwtSecret))
 }
 
 // 判断是否 IP

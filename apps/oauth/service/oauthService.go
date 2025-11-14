@@ -16,6 +16,7 @@ import (
 	cm "github.com/GoFurry/gofurry-user/common/models"
 	cs "github.com/GoFurry/gofurry-user/common/service"
 	"github.com/GoFurry/gofurry-user/common/util"
+	"github.com/GoFurry/gofurry-user/roof/env"
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -98,7 +99,7 @@ func oauthLogin(c *fiber.Ctx, userOpenID string, provider string) (tokenStr stri
 			Nickname: userOpenID,
 			Email:    nil,
 			Oauth:    true,
-			Password: util.CreateMD5("123456" + common.COMMON_AUTH_SALT),
+			Password: util.CreateMD5("123456" + env.GetServerConfig().Auth.AuthSalt),
 			Role:     "暂无",
 			Status:   "normal",
 			Avatar:   us.Avatars[rand.Intn(len(us.Avatars))],
