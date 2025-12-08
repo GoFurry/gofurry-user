@@ -18,6 +18,7 @@ import (
 	"github.com/GoFurry/gofurry-user/common/util"
 	"github.com/GoFurry/gofurry-user/roof/env"
 	"github.com/gofiber/fiber/v2"
+	"google.golang.org/grpc/credentials"
 )
 
 type oauthService struct{}
@@ -40,12 +41,12 @@ func (s oauthService) GithubLogin(c *fiber.Ctx, code string) (string, common.GFE
 
 	// 微服务版本
 	// 连接gRPC服务
-	//creds, err := credentials.NewClientTLSFromFile(env.GetServerConfig().Key.GrpcTls, "")
-	//if err != nil {
-	//	return "", common.NewServiceError("加载TLS证书失败: " + err.Error())
-	//}
+	creds, err := credentials.NewClientTLSFromFile(env.GetServerConfig().Key.GrpcTls, "")
+	if err != nil {
+		return "", common.NewServiceError("加载TLS证书失败: " + err.Error())
+	}
 	// 连接池复用 gRPC 连接
-	conn, err := util.GetGrpcClientConn("github-oauth-service", nil)
+	conn, err := util.GetGrpcClientConn("github-oauth-service", &creds)
 	if err != nil {
 		return "", common.NewServiceError("获取 gRPC 连接失败: " + err.Error())
 	}

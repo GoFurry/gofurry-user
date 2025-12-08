@@ -70,18 +70,16 @@ func (r *response) SuccessWithData(data interface{}) error {
 
 // 错误响应
 func (r *response) Error(data interface{}) error {
-	result := ResultData{
+	return r.context.JSON(ResultData{
 		Code: RETURN_FAILED,
 		Data: data,
-	}
-	return r.context.JSON(result)
+	})
 }
 
 // 带状态码的错误响应
 func (r *response) ErrorWithCode(data interface{}, code int) error {
-	result := ResultData{
+	return r.context.Status(code).JSON(ResultData{
 		Code: RETURN_FAILED,
 		Data: data,
-	}
-	return r.context.Status(code).JSON(result)
+	})
 }
